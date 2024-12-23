@@ -36,11 +36,17 @@ function MainContent() {
     );
 }
 
-function Footer(){
-    return(
-        <p>Tous droits réservés - El Haddad Ilyass</p>
-    )
+function Footer() {
+    // Récupérer l'année actuelle
+    const annee = new Date().getFullYear();
+
+    return (
+        <p>
+            © {annee} - Ilyass El Haddad, Tous droits réservés.
+        </p>
+    );
 }
+
 function App() {
     const [count, setCount] = useState(0)
 
