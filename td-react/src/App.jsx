@@ -12,11 +12,30 @@ function Header(){
         </header>
     )
 }
-function MainContent(){
+function MainContent() {
+    // Récupérer la date actuelle
+    const now = new Date();
+    const jours = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+    const mois = [
+        "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+        "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
+    ];
+
+    const jour = jours[now.getDay()]; // Jour de la semaine
+    const moisNom = mois[now.getMonth()]; // Mois en texte
+    const annee = now.getFullYear(); // Année
+    const heure = String(now.getHours()).padStart(2, "0"); // Heure avec zéro initial
+    const minute = String(now.getMinutes()).padStart(2, "0"); // Minute avec zéro initial
+    const seconde = String(now.getSeconds()).padStart(2, "0"); // Seconde avec zéro initial
+
     return (
-        <p>Ici, nous afficherons des informations interessantes :</p>
-    )
+        <p>
+            Bonjour, on est le <b>{jour}</b>, <b>{moisNom}</b>, <b>{annee}</b>
+             et il est <b>{heure}:{minute}:{seconde}</b>.
+        </p>
+    );
 }
+
 function Footer(){
     return(
         <p>Tous droits réservés - El Haddad Ilyass</p>
