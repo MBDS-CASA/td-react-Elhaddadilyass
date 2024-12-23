@@ -12,13 +12,18 @@ function Header(){
         </header>
     )
 }
-
+function MainContent(){
+    return (
+        <p>Ici, nous afficherons des informations interessantes :</p>
+    )
+}
 function App() {
     const [count, setCount] = useState(0)
 
     return (
     <>
         <Header />
+        <MainContent/>
       <div>
         <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
