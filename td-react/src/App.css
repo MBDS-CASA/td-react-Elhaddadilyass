@@ -1,3 +1,4 @@
+/* Existing CSS styles for layout and animations */
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -11,9 +12,11 @@
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
@@ -39,4 +42,74 @@
 
 .read-the-docs {
   color: #888;
+}
+
+/* Hamburger menu styles */
+.menu-container {
+  position: relative;
+}
+
+.hamburger {
+  background-color: #282c34;
+  color: white;
+  font-size: 30px;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  position: fixed; /* Fix the hamburger to top-left */
+  top: 10px;
+  left: 10px;
+  z-index: 100;
+}
+
+.menu {
+  display: none;
+  background-color: #301e57;
+  position: fixed; /* Fix the menu to cover the entire screen */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding-top: 50px;
+}
+
+.menu.open {
+  display: block;
+}
+
+.menu ul {
+  list-style-type: none;
+  padding: 0;
+  text-align: center;
+}
+
+.menu li {
+  padding: 15px 20px;
+  color: white;
+  cursor: pointer;
+  border-bottom: 1px solid #444;
+}
+
+.menu li:hover {
+  background-color: #5e449e;
+}
+
+/* Mobile responsiveness */
+@media (min-width: 600px) {
+  .hamburger {
+    display: none; /* Hide hamburger menu on larger screens */
+  }
+  .menu {
+    display: flex;
+    justify-content: space-around;
+    position: static;
+    width: auto;
+    height: auto;
+    padding-top: 0;
+  }
+  .menu li {
+    border: none;
+    padding: 10px;
+    text-align: left;
+  }
 }

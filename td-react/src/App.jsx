@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState, useEffect } from "react";
+import reactLogo from "./assets/react.svg";
+import viteLogo from "/vite.svg";
 
-import './App.css'
+import "./App.css";
 
 function Header() {
     return (
@@ -14,7 +14,6 @@ function Header() {
 }
 
 function MainContent() {
-    // Récupérer la date actuelle
     const now = new Date();
     const jours = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
     const mois = [
@@ -22,12 +21,12 @@ function MainContent() {
         "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
     ];
 
-    const jour = jours[now.getDay()]; // Jour de la semaine
-    const moisNom = mois[now.getMonth()]; // Mois en texte
-    const annee = now.getFullYear(); // Année
-    const heure = String(now.getHours()).padStart(2, "0"); // Heure avec zéro initial
-    const minute = String(now.getMinutes()).padStart(2, "0"); // Minute avec zéro initial
-    const seconde = String(now.getSeconds()).padStart(2, "0"); // Seconde avec zéro initial
+    const jour = jours[now.getDay()];
+    const moisNom = mois[now.getMonth()];
+    const annee = now.getFullYear();
+    const heure = String(now.getHours()).padStart(2, "0");
+    const minute = String(now.getMinutes()).padStart(2, "0");
+    const seconde = String(now.getSeconds()).padStart(2, "0");
 
     return (
         <p>
@@ -38,7 +37,6 @@ function MainContent() {
 }
 
 function Footer() {
-    // Récupérer l'année actuelle
     const annee = new Date().getFullYear();
 
     return (
@@ -51,12 +49,13 @@ function Footer() {
 function GetRandomItems() {
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
+    const [randomItem, setRandomItem] = useState(null);
 
     useEffect(() => {
-        fetch('./data.json')  // Ensure this is the correct path to your data.json
+        fetch("./data.json")
             .then((response) => {
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    throw new Error("Network response was not ok");
                 }
                 return response.json();
             })
@@ -65,11 +64,17 @@ function GetRandomItems() {
             })
             .catch((error) => {
                 setError(error.message || error);
-                console.error('Error fetching data:', error);
+                console.error("Error fetching data:", error);
             });
     }, []);
 
-    // If there's an error or data is still loading, show a message
+    const getRandomItem = () => {
+        if (data && data.length > 0) {
+            const item = data[Math.floor(Math.random() * data.length)];
+            setRandomItem(item);
+        }
+    };
+
     if (error) {
         return <p>Error loading data...</p>;
     }
@@ -78,26 +83,54 @@ function GetRandomItems() {
         return <p>Loading data...</p>;
     }
 
-    // Select a random item from the data array
-    const randomItem = data[Math.floor(Math.random() * data.length)];
-
     return (
         <div>
-            <h3>Random Item:</h3>
-            <p><b>Course:</b> {randomItem.course}</p>
-            <p><b>Student:</b> {randomItem.student.firstname} {randomItem.student.lastname}</p>
-            <p><b>Date:</b> {randomItem.date}</p>
-            <p><b>Grade:</b> {randomItem.grade}</p>
+            <h3>Random Item</h3>
+            <button onClick={getRandomItem}>Get Random Item</button>
+            {randomItem && (
+                <div>
+                    <p><b>Course:</b> {randomItem.course}</p>
+                    <p><b>Student:</b> {randomItem.student.firstname} {randomItem.student.lastname}</p>
+                    <p><b>Date:</b> {randomItem.date}</p>
+                    <p><b>Grade:</b> {randomItem.grade}</p>
+                </div>
+            )}
+        </div>
+    );
+}
+
+function Menu() {
+    const [isMenuOpen, setMenuOpen] = useState(false);
+
+    const handleMenuClick = (item) => {
+        alert(`Vous avez cliqué sur : ${item}`);
+        setMenuOpen(false);
+    };
+
+    return (
+        <div className={`menu-container ${isMenuOpen ? "open" : ""}`}>
+            <button className="hamburger" onClick={() => setMenuOpen(!isMenuOpen)}>
+                &#9776;
+            </button>
+            <nav className={`menu ${isMenuOpen ? "open" : ""}`}>
+                <ul>
+                    <li onClick={() => handleMenuClick("Notes")}>Notes</li>
+                    <li onClick={() => handleMenuClick("Etudiants")}>Etudiants</li>
+                    <li onClick={() => handleMenuClick("Matières")}>Matières</li>
+                    <li onClick={() => handleMenuClick("A propos")}>A propos</li>
+                </ul>
+            </nav>
         </div>
     );
 }
 
 function App() {
-    const [count, setCount] = useState(0)
+    const [count, setCount] = useState(0);
 
     return (
         <>
             <Header />
+            <Menu />
             <GetRandomItems />
             <MainContent />
 
@@ -110,7 +143,7 @@ function App() {
                 </a>
             </div>
 
-            <h1>Vite + dorr+ React</h1>
+            <h1>Vite + React</h1>
 
             <div className="card">
                 <button onClick={() => setCount(count + 1)}>
