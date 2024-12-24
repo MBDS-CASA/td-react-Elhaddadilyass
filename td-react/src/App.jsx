@@ -1,39 +1,144 @@
 import { useState, useEffect } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField } from "@mui/material"; // Import Material UI components
 import "./App.css";
 
 function Header() {
     return (
         <header>
-            <img src={"https://newsroom.univ-cotedazur.fr/images/vignette_par_defaut.jpg"} style={{width:"auto", height: "100px" }} />
+            <img src={"https://newsroom.univ-cotedazur.fr/images/vignette_par_defaut.jpg"} style={{ width: "auto", height: "100px" }} />
             <h1>Introduction à React</h1>
             <h2>À la découverte des premières notions de React</h2>
         </header>
     );
 }
 
-function MainContent() {
-    const now = new Date();
-    const jours = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
-    const mois = [
-        "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
-        "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
-    ];
+function MainContent({ activeMenu, data, searchQuery }) {
+    if (activeMenu === "Notes") {
+        return (
+            <div>
+                <h3>Liste des Notes</h3>
+                <Note data={data} searchQuery={searchQuery} />
+            </div>
+        );
+    }
+    if (activeMenu === "Étudiants") {
+        return (
+            <div>
+                <h3>Liste des Étudiants</h3>
+                <Students data={data} searchQuery={searchQuery} />
+            </div>
+        );
+    }
+    if (activeMenu === "Matières") {
+        return (
+            <div>
+                <h3>Liste des Matières</h3>
+                <Matières data={data} searchQuery={searchQuery} />
+            </div>
+        );
+    }
+    if (activeMenu === "À propos") {
+        return (
+            <div>
+                <h3>À propos</h3>
+                <p>Ceci est une application d'exemple pour démontrer React.</p>
+            </div>
+        );
+    }
+    return null;
+}
 
-    const jour = jours[now.getDay()];
-    const moisNom = mois[now.getMonth()];
-    const annee = now.getFullYear();
-    const heure = String(now.getHours()).padStart(2, "0");
-    const minute = String(now.getMinutes()).padStart(2, "0");
-    const seconde = String(now.getSeconds()).padStart(2, "0");
+function Note({ data, searchQuery }) {
+    const filteredData = data.filter((item) => {
+        const gradeString = item.grade.toString(); // Convert grade to string for comparison
+        const query = searchQuery.toLowerCase().trim();
+        const fullName = `${item.student.firstname} ${item.student.lastname}`.toLowerCase();
+        return (
+            fullName.includes(query) || gradeString.includes(query)
+        );
+    });
 
     return (
-        <p>
-            Bonjour, on est le <b>{jour}</b>, <b>{moisNom}</b>, <b>{annee}</b>
-            et il est <b>{heure}:{minute}:{seconde}</b>.
-        </p>
+        <TableContainer component={Paper}>
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>Student</TableCell>
+                        <TableCell>Grade</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {filteredData.map((item, index) => (
+                        <TableRow key={index}>
+                            <TableCell>{item.student.firstname} {item.student.lastname}</TableCell>
+                            <TableCell>{item.grade}</TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </TableContainer>
+    );
+}
+
+function Students({ data, searchQuery }) {
+    const filteredData = data.filter((item) => {
+        const query = searchQuery.toLowerCase().trim();
+        const fullName = `${item.student.firstname} ${item.student.lastname}`.toLowerCase();
+        return (
+            fullName.includes(query) ||
+            item.student.id.toString().includes(query) // Include search by student ID
+        );
+    });
+
+    return (
+        <TableContainer component={Paper}>
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>First Name</TableCell>
+                        <TableCell>Last Name</TableCell>
+                        <TableCell>Student ID</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {filteredData.map((item, index) => (
+                        <TableRow key={index}>
+                            <TableCell>{item.student.firstname}</TableCell>
+                            <TableCell>{item.student.lastname}</TableCell>
+                            <TableCell>{item.student.id}</TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </TableContainer>
+    );
+}
+
+function Matières({ data, searchQuery }) {
+    const filteredData = data.filter((item) => {
+        const query = searchQuery.toLowerCase().trim();
+        return item.course.toLowerCase().includes(query);
+    });
+
+    return (
+        <TableContainer component={Paper}>
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>Course</TableCell>
+                        <TableCell>Date</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {filteredData.map((item, index) => (
+                        <TableRow key={index}>
+                            <TableCell>{item.course}</TableCell>
+                            <TableCell>{item.date}</TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </TableContainer>
     );
 }
 
@@ -44,59 +149,6 @@ function Footer() {
         <footer>
             <p>© {annee} - Ilyass El Haddad, Tous droits réservés.</p>
         </footer>
-    );
-}
-
-function GetRandomItems() {
-    const [data, setData] = useState(null);
-    const [error, setError] = useState(null);
-    const [randomItem, setRandomItem] = useState(null);
-
-    useEffect(() => {
-        fetch("./data.json")
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                return response.json();
-            })
-            .then((data) => {
-                setData(data);
-            })
-            .catch((error) => {
-                setError(error.message || error);
-                console.error("Error fetching data:", error);
-            });
-    }, []);
-
-    const getRandomItem = () => {
-        if (data && data.length > 0) {
-            const item = data[Math.floor(Math.random() * data.length)];
-            setRandomItem(item);
-        }
-    };
-
-    if (error) {
-        return <p>Error loading data...</p>;
-    }
-
-    if (!data) {
-        return <p>Loading data...</p>;
-    }
-
-    return (
-        <div>
-            <h3>Élément Aléatoire</h3>
-            <button onClick={getRandomItem}>Obtenir un Élément Aléatoire</button>
-            {randomItem && (
-                <div>
-                    <p><b>Course:</b> {randomItem.course}</p>
-                    <p><b>Student:</b> {randomItem.student.firstname} {randomItem.student.lastname}</p>
-                    <p><b>Date:</b> {randomItem.date}</p>
-                    <p><b>Grade:</b> {randomItem.grade}</p>
-                </div>
-            )}
-        </div>
     );
 }
 
@@ -136,45 +188,62 @@ function Menu({ onMenuClick }) {
 
 function App() {
     const [activeMenu, setActiveMenu] = useState("Notes");
+    const [data, setData] = useState([]);
+    const [error, setError] = useState(null);
+    const [searchQuery, setSearchQuery] = useState("");
+
+    useEffect(() => {
+        fetch("./data.json")
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then((data) => {
+                setData(data);
+            })
+            .catch((error) => {
+                setError(error.message || error);
+                console.error("Error fetching data:", error);
+            });
+    }, []);
 
     const handleMenuClick = (item) => {
-        if (["Notes", "Étudiants", "Matières", "À propos"].includes(item)) {
-            setActiveMenu(item);
-        }
+        setActiveMenu(item);
+        setSearchQuery("");
     };
+
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
+    };
+
+    if (error) {
+        return <p>Error loading data...</p>;
+    }
+
+    if (!data.length) {
+        return <p>Loading data...</p>;
+    }
 
     return (
         <>
             <Header />
             <Menu onMenuClick={handleMenuClick} />
             <div className="main-content">
-                {/* Display only the menu selection */}
-                <h3>{activeMenu} est sélectionné</h3>
-                <GetRandomItems />
+                {/* Search Bar positioned to the right above the table */}
+                <div className="search-container" style={{ marginBottom: "20px" }}>
+                    <TextField
+                        label="Recherche"
+                        variant="outlined"
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                        style={{ backgroundColor: "white", width: "250px" }}
+                    />
+                </div>
+                {/* Display content based on the selected menu */}
+                <MainContent activeMenu={activeMenu} data={data} searchQuery={searchQuery} />
             </div>
-            <MainContent />
-
-            <div>
-                <a href="https://vite.dev" target="_blank">
-                    <img src={viteLogo} className="logo" alt="Vite logo" />
-                </a>
-                <a href="https://react.dev" target="_blank">
-                    <img src={reactLogo} className="logo react" alt="React logo" />
-                </a>
-            </div>
-
-            <h1>Vite + React</h1>
-
-            <div className="card">
-                <p>
-                    Edit <code>src/App.jsx</code> and save to test HMR
-                </p>
-            </div>
-
-            <p className="read-the-docs">
-                Cliquez sur les logos Vite et React pour en savoir plus
-            </p>
-
             <Footer />
         </>
     );

@@ -123,3 +123,14 @@
     color: #5e449e;
   }
 }
+
+.search-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.MuiTextField-root {
+  background-color: white;
+  width: 250px;
+}
