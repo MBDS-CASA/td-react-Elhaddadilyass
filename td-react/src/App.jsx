@@ -7,8 +7,9 @@ import "./App.css";
 function Header() {
     return (
         <header>
+            <img src={"https://newsroom.univ-cotedazur.fr/images/vignette_par_defaut.jpg"} style={{width:"auto", height: "100px" }} />
             <h1>Introduction à React</h1>
-            <h2>A la découverte des premières notions de React</h2>
+            <h2>À la découverte des premières notions de React</h2>
         </header>
     );
 }
@@ -85,8 +86,8 @@ function GetRandomItems() {
 
     return (
         <div>
-            <h3>Random Item</h3>
-            <button onClick={getRandomItem}>Get Random Item</button>
+            <h3>Élément Aléatoire</h3>
+            <button onClick={getRandomItem}>Obtenir un Élément Aléatoire</button>
             {randomItem && (
                 <div>
                     <p><b>Course:</b> {randomItem.course}</p>
@@ -99,12 +100,16 @@ function GetRandomItems() {
     );
 }
 
-function Menu() {
+function Menu({ onMenuClick }) {
     const [isMenuOpen, setMenuOpen] = useState(false);
+    const [activeItem, setActiveItem] = useState("Notes");
+
+    const menuItems = ["Notes", "Étudiants", "Matières", "À propos"];
 
     const handleMenuClick = (item) => {
-        alert(`Vous avez cliqué sur : ${item}`);
+        setActiveItem(item);
         setMenuOpen(false);
+        onMenuClick(item); // Notify parent about the selected item
     };
 
     return (
@@ -114,10 +119,15 @@ function Menu() {
             </button>
             <nav className={`menu ${isMenuOpen ? "open" : ""}`}>
                 <ul>
-                    <li onClick={() => handleMenuClick("Notes")}>Notes</li>
-                    <li onClick={() => handleMenuClick("Etudiants")}>Etudiants</li>
-                    <li onClick={() => handleMenuClick("Matières")}>Matières</li>
-                    <li onClick={() => handleMenuClick("A propos")}>A propos</li>
+                    {menuItems.map((item) => (
+                        <li
+                            key={item}
+                            onClick={() => handleMenuClick(item)}
+                            className={activeItem === item ? "active" : ""}
+                        >
+                            {item}
+                        </li>
+                    ))}
                 </ul>
             </nav>
         </div>
@@ -125,13 +135,23 @@ function Menu() {
 }
 
 function App() {
-    const [count, setCount] = useState(0);
+    const [activeMenu, setActiveMenu] = useState("Notes");
+
+    const handleMenuClick = (item) => {
+        if (["Notes", "Étudiants", "Matières", "À propos"].includes(item)) {
+            setActiveMenu(item);
+        }
+    };
 
     return (
         <>
             <Header />
-            <Menu />
-            <GetRandomItems />
+            <Menu onMenuClick={handleMenuClick} />
+            <div className="main-content">
+                {/* Display only the menu selection */}
+                <h3>{activeMenu} est sélectionné</h3>
+                <GetRandomItems />
+            </div>
             <MainContent />
 
             <div>
@@ -146,16 +166,13 @@ function App() {
             <h1>Vite + React</h1>
 
             <div className="card">
-                <button onClick={() => setCount(count + 1)}>
-                    count is {count}
-                </button>
                 <p>
                     Edit <code>src/App.jsx</code> and save to test HMR
                 </p>
             </div>
 
             <p className="read-the-docs">
-                Click on the Vite and React logos to learn more
+                Cliquez sur les logos Vite et React pour en savoir plus
             </p>
 
             <Footer />
